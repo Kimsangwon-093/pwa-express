@@ -84,10 +84,8 @@ app.post('/api/posts', (request, response, next) => {
 // 라우트 그룹
 // --------------
 // 라우트를 모듈로 나누고 그룹핑하여 관리
-// app.use(authRouter);
-
-
-app.use('/api/users/hi',eduUsersTest,usersRouter);
+app.use('/api',authRouter);
+// app.use('/api/users/hi',eduUsersTest,usersRouter);
 
 // // 대체 라우트(모든 라우터 중에 가장 마지막에 작성)
 app.use((request, response, next) => {
