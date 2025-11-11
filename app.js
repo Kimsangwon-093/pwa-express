@@ -1,8 +1,16 @@
 // express 기본 구조 
 
-import express from 'express';  //express 모듈 가져오기
+import express,{ request, response } from 'express';  //express 모듈 가져오기
+import authRouter from './routes/auth.router.js';
+import usersRouter from './routes/users.router.js';
+import { eduTest, eduUsersTest } from './app/middlewares/edu/edu.middleware.js';
 
 const app = express();
+app.use(express.json()); //JSON으로 요청이 올 경우 파싱 처리
+app.use(eduTest);
+
+
+// 파싱(parsing) : 특정 형태를 원하는 형태로 만드는 것
 
 // 클라이언트가 '/api/hi' 경로로 GET 요청을 보낼 때 실행되는 Router 
 app.get('/api/hi', (request, response, next) => {
@@ -57,20 +65,37 @@ app.get('/api/posts/:id', (request, response, next) => {
   response.status(200).send(postId);
 });
 
+// JSON 요청제어
+app.post('/api/posts', (request, response, next) => {
+  const {account, password, name} = request.body;
+  // const account = request.body.account;
+  // const password = request.body.password;
+  // const name = request.body.name;
+//   response.status(200).send({account, password, name});
 
-// -----------
-// 대체 라우트(모든 라우터 중에 가장 마지막에 작성)
-app.use((request, response, next) => {
-  response.status(404).send('찾을수 없는 페이지 입니다.');
+//   response.status(200).send({
+//     password:password
+//     ,account:account
+//     ,name:name
+//   });
 });
 
+// --------------
+// 라우트 그룹
+// --------------
+// 라우트를 모듈로 나누고 그룹핑하여 관리
+// app.use(authRouter);
+
+
+app.use('/api/users/hi',eduUsersTest,usersRouter);
+
 // // 대체 라우트(모든 라우터 중에 가장 마지막에 작성)
-// app.use((request, response, next) => {
-//   response.status(404).send({
-//     code:'E01',
-//     msg:'찾을 수 없는 페이지 입니다'
-//   });
-// });
+app.use((request, response, next) => {
+  response.status(404).send({
+    code:'E01',
+    msg:'찾을 수 없는 페이지 입니다'
+  });
+});
 
 
 // 서버를 주어진 포트에서 시작
