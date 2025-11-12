@@ -1,26 +1,48 @@
 import express from 'express';
-import { eduUsersTest } from '../app/middlewares/edu/edu.middleware.js';
-
+import pool from '../db/my-db.js'
+import { selectFields } from 'express-validator/lib/field-selection.js';
+import db from '../app/models/index.js';
+const {sequelize , Employee} = db;
 const usersRouter = express.Router();
 
-usersRouter.get('/api/users/hi', eduUsersTest,(request, response, next) => {
-  response.status(200).send("유저 겟 조회 완료");
+usersRouter.get('/', (request, response, next) => {
+  response.status(200).send('전체 유저 정보 조회 완료');
 });
 
-usersRouter.post('/', (request, response, next) => {
-  response.status(200).send("유저 포스트 조회 완료");
+usersRouter.get('/:id', async (request, response, next) => {
+  try{
+  const id = parseInt(request.params.id);
+  // --------------------
+  //  sequelize로 DB연동
+  // --------------------
+  try{
+    const result = await Employee.findByPk(id);
+    return response.status(200).send(result);
+  }catch(error) {
+    next(error);
+  }
+  
+  
+  // --------------------
+  //  mysql2로 DB연동
+  // --------------------
+  //   // 쿼리 작성
+  //   const sql = ` 
+  //     SELECT *
+  //     FROM employees
+  //     WHERE
+  //       emp_id = ${id}
+  //   `;
+
+  // const [result] = await pool.query(sql);
+  // return response.status(200).send(result);
+  } catch(error){
+    next(error);
+  }
 });
 
-usersRouter.put('/api/users/:id', (request, response, next) => {
-  response.status(200).send("유저 풋 조회 완료");
-});
-
-usersRouter.delete('/api/users/:id', (request, response, next) => {
-  response.status(200).send("유저 딜리트 조회 완료");
-});
-
-usersRouter.patch('/api/users/:id', (request, response, next) => {
-  response.status(200).send("유저 패치 완료");
+usersRouter.put('/:id', (request, response, next) => {
+  response.status(200).send('유저 정보 수정 완료');
 });
 
 export default usersRouter;

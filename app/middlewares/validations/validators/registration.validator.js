@@ -1,3 +1,3 @@
-import { account, password, name } from "../fields/users.field.js";
+import { account, name, password } from "../fields/users.field.js";
 
 export default [account, password, name];
