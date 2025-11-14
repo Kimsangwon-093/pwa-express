@@ -1,22 +1,24 @@
 import 'dotenv/config';
 import { Sequelize } from 'sequelize';
 import Employee from './Employee.js';
+import TitleEmp from './TitleEmp.js';
+import Title from './Title.js';
 
-const db = {}; //생성할 db 인스턴스 저장
+const db = {}; // 생성할 db 인스턴스 저장
 
 // Sequelize 인스턴스 생성
 const sequelize = new Sequelize(
-  process.env.DB_MYSQL_DB_NAME,     //DB명
-  process.env.DB_MYSQL_USER,        //DB 접속 유저
-  process.env.DB_MYSQL_PASSWORD,    //DB 접속 비밀번호
+  process.env.DB_MYSQL_DB_NAME,   // DB명
+  process.env.DB_MYSQL_USER,      // DB 접속 유저
+  process.env.DB_MYSQL_PASSWORD,  // DB 접속 비밀번호
   {
-    host: process.env.DB_MYSQL_HOST,           // 사용 DB Host
-    port: parseInt(process.env.DB_MYSQL_PORT), // 사용 DB Port
-    dialect: process.env.DB_MYSQL_DIALECT,     // 사용 DB 드라이버
-    timezone: process.env.DB_MYSQL_TIMEZONE,   // 타임존 (+09:00)
+    host: process.env.DB_MYSQL_HOST,            // 사용 DB Host
+    port: parseInt(process.env.DB_MYSQL_PORT),  // 사용 DB Port
+    dialect: process.env.DB_MYSQL_DIALECT,      // 사용 DB 드라이버
+    timezone: process.env.DB_MYSQL_TIMEZONE,    // 타임존 (+09:00)
     logging: process.env.DB_MYSQL_LOG_FLG === 'true' && console.log, // DB Logging
     dialectOptions: {
-      dataStrings: true // 문자열로 날짜 받기
+      dateStrings: true // 문자열로 날짜 받기
     },
     pool: { // 커넥션풀 설정
       max: parseInt(process.env.DB_MYSQL_CONNECTION_COUNT_MAX), // 최대 커넥션 수
@@ -29,17 +31,15 @@ const sequelize = new Sequelize(
 
 db.sequelize = sequelize; // 생성한 sequelize 인스턴스를 db에 저장
 
-//  모델 초기화 
+// 모델 초기화
 db.Employee = Employee.init(sequelize);
+db.TitleEmp = TitleEmp.init(sequelize);
+db.Title = Title.init(sequelize);
 
-//  모델 관계 설정
+// 모델 관계 설정
+Employee.associate(db);
+TitleEmp.associate(db);
+Title.associate(db);
 
-
-//  db 내보내기
+// db 내보내기
 export default db;
-
-
-
-
-
-
